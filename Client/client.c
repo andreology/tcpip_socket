@@ -12,6 +12,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <dirent.h>
 
 int assign_sock_addy(struct sockaddr_in addy, int port, char ip) {
   int validate = 1;
@@ -35,9 +36,9 @@ int main(int argc, char *argv[]) {
   sscanf(argv[1], "%s", &ip_address);
   sscanf(argv[2], "%d", &port);
   int sc_length = sizeof(socket_connect);
-
-  printf("stuff in args %d\n", port);
-  printf("stuff in args %s\n", ip_address);
+  FILE* fp;
+  int nbytes;
+ 
 
   //represents an address family, where most internet apps use AF_INET
   socket_connect.sin_family = AF_INET;
@@ -52,13 +53,34 @@ int main(int argc, char *argv[]) {
   //connecting to server
   if (connect(client_socket, (struct sockaddr *)&socket_connect, sizeof(socket_connect)) < 0)
   {
-    printf("\nConnection Failed \n");
+    printf("\n>>> Connection Failed \n");
     return -1;
   }else {
-    printf("\nConnection established\n");
+    printf("\n>>> Connection established\n");
   }
-  
-  send(client_socket , "Connected!" , strlen("Connected!") , 0 );
+  char dir[] = "dir";
+  send(client_socket , ">>> Connected!" , strlen(">>> Connected!") , 0 );
+  printf("IP: %s Port: %d\n", ip_address, port);
+  while(1){
+    printf("\nPlease enter file name:\n");
+   // printf("\nBefore: %s\n",client_buffer);
+    scanf("%s",client_buffer); //user enters value
+    //printf("\nAFter: %s\n",client_buffer);
+    fp = fopen(client_buffer, "r");
+    if(fp == NULL && strcmp(client_buffer, dir) != 0){
+      printf("\nFile not found\n");
+    }
+    else if(fp == NULL && strcmp(client_buffer, dir) == 0){
+      printf("\n-----------------\n"); 
+    }
+    else
+    {
+      send(client_socket, client_buffer, 32, sc_length);
+      printf("\nFile Successfully sent");
+    }
+    
+    printf("-------------");
 
-
+    //while(1){}
+  }
 }

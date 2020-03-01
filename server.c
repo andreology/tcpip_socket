@@ -12,6 +12,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <dirent.h>
 
 //helper functions
 
@@ -56,6 +57,7 @@ while(1) {
     recvfrom(server_socket, server_buffer, 32, 0,
             (struct sockaddr*)&socket_connect, &sc_length);
     printf("\n %s", server_buffer);
+    printf("\nWaiting for file...");
 }
   return 0;
 }
