@@ -14,6 +14,28 @@
 #include <arpa/inet.h>
 #include <dirent.h>
 
+#define sendrecvflag 0 
+//Taken from FileTransfer example
+int sendFile(FILE* fp, char* buf, int s) 
+{  
+	// if (fp == NULL) { 
+	// 	strcpy(buf, nofile); 
+	// 	int len = strlen(nofile); 
+	// 	buf[len] = EOF; 
+	// 	//for (i = 0; i <= len; i++) 
+	// 		//buf[i] = Cipher(buf[i]); 
+  //   return 1; 
+	// } 
+	char ch; 
+	for (int i = 0; i < s; i++) { 
+		ch = fgetc(fp);  
+		buf[i] = ch; 
+		if (ch == EOF) 
+			return 1; 
+	} 
+	return 0; 
+}
+
 int assign_sock_addy(struct sockaddr_in addy, int port, char ip) {
   int validate = 1;
 
@@ -39,7 +61,6 @@ int main(int argc, char *argv[]) {
   FILE* fp;
   int nbytes;
  
-
   //represents an address family, where most internet apps use AF_INET
   socket_connect.sin_family = AF_INET;
   //a 16-bit port number in Network Byte order
@@ -53,33 +74,36 @@ int main(int argc, char *argv[]) {
   //connecting to server
   if (connect(client_socket, (struct sockaddr *)&socket_connect, sizeof(socket_connect)) < 0)
   {
-    printf("\n>>> Connection Failed \n");
+    printf("\nConnection Failed \n");
     return -1;
   }else {
-    printf("\n>>> Connection established\n");
+    printf("\nConnection established\n");
   }
   char dir[] = "dir";
-  send(client_socket , ">>> Connected!" , strlen(">>> Connected!") , 0 );
+  send(client_socket , "Connected!" , strlen("Connected!") , 0 );
   printf("IP: %s Port: %d\n", ip_address, port);
   while(1){
     printf("\nPlease enter file name:\n");
-   // printf("\nBefore: %s\n",client_buffer);
+   
     scanf("%s",client_buffer); //user enters value
-    //printf("\nAFter: %s\n",client_buffer);
+    
     fp = fopen(client_buffer, "r");
-    if(fp == NULL && strcmp(client_buffer, dir) != 0){
+    if(fp == NULL && strcmp(client_buffer, dir) != 0)
+    {
       printf("\nFile not found\n");
     }
     else if(fp == NULL && strcmp(client_buffer, dir) == 0){
-      printf("\n-----------------\n"); 
+
+      printf("\ndirectories\n"); 
     }
     else
     {
-      send(client_socket, client_buffer, 32, sc_length);
-      printf("\nFile Successfully sent");
+      sendto(client_socket, client_buffer, 32, 
+                  sendrecvflag, (struct sockaddr*)&socket_connect, sizeof(socket_connect));
+      printf("\nFile successfully sent\n");
     }
     
-    printf("-------------");
+    printf("\n-------------\n");
 
     //while(1){}
   }

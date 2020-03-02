@@ -5,16 +5,21 @@
 //transfer files and communicate with clients
 #include <stdlib.h>
 #include <stdio.h>
-
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <unistd.h>
 #include <arpa/inet.h>
-#include <dirent.h>
 
 //helper functions
+//From FileTransfer Examplse
+void clearBuf(char* b) 
+{ 
+	int i; 
+	for (i = 0; i < 32; i++) 
+		b[i] = '\0'; 
+}
 
 
 void verify_sock_descriptor(int socket) {
@@ -31,6 +36,8 @@ int main(int argc, char *argv[]) {
   int socket_descr;
   int incoming_socket;
   char server_buffer[32];
+  FILE* fp;
+
   sscanf(argv[1], "%d", &port);
   //creating socket structuresockaddr_in
   struct sockaddr_in socket_connect;
@@ -50,14 +57,18 @@ int main(int argc, char *argv[]) {
     printf("\nSuccessfully binded!\n");
   else
     printf("\nBinding Failed!\n");
-
-while(1) {
-    // sendto(server_socket, server_buffer, 32, 0, (struct sockaddr*)&socket_connect,
-    //   sc_length);
-    recvfrom(server_socket, server_buffer, 32, 0,
-            (struct sockaddr*)&socket_connect, &sc_length);
-    printf("\n %s", server_buffer);
-    printf("\nWaiting for file...");
-}
+  read(server_socket, server_buffer, sizeof(server_buffer));
+  printf("\n%s\n", server_buffer);
+  clearBuf(server_buffer);
+  printf("\n%s\n", server_buffer);
+  
+ while(1) {
+//     // sendto(server_socket, server_buffer, 32, 0, (struct sockaddr*)&socket_connect,
+//     //   sc_length);
+     clearBuf(server_buffer); 
+     recvfrom(server_socket, server_buffer, 32, 0, (struct sockaddr*)&socket_connect, &sc_length);
+     printf("\n %s", server_buffer);
+   
+ }
   return 0;
 }
