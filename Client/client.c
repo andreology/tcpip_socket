@@ -16,6 +16,7 @@
 
 #define sendrecvflag 0
 
+
 //helper functions
 //From FileTransfer Examplse
 void clearBuf(char* b)
@@ -64,13 +65,13 @@ int main(int argc, char *argv[]) {
   }
   char dir[] = "dir";
   char con_mess[] = ">>> Connected!\n";
-
   printf("\nIP: %s Port: %d\n", ip_address, port);
 
   while(1)
   {
 		sendto(client_socket, con_mess, 32, 0,
 			(struct sockaddr*)&socket_connect, sc_length);
+
 		clearBuf(client_buffer);
     printf("\nEnter a valid file name on the server or enter “dir” command:\n");
     scanf("%s",client_buffer); //user enters value
@@ -83,25 +84,19 @@ int main(int argc, char *argv[]) {
 
 			sendto(client_socket, client_buffer, 32, 0,
 				(struct sockaddr*)&socket_connect, sc_length);
-
 			while(1) {
 				clearBuf(client_buffer);
-
 				int y = recvfrom(client_socket, client_buffer, 32,
 									0, (struct sockaddr*)&socket_connect,
 									&sc_length);
-					printf("\n%s\n", client_buffer);
-
 				if(strcmp("no", client_buffer) == 0) {
+
 				}
-				//	process
 					if (sendFile(fp, client_buffer, 32)) {
 						send(client_socket , client_buffer , strlen(client_buffer) , 0 );
 					}
-
 					fclose(fp);
 				}
-				break;
 		}
   //    /*------------------Req 6------------------*/
   //   else if(fp == NULL && strcmp(client_buffer, dir) == 0){
