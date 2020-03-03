@@ -15,26 +15,7 @@
 #include <dirent.h>
 
 #define sendrecvflag 0 
-//Taken from FileTransfer example
-int sendFile(FILE* fp, char* buf, int s) 
-{  
-	// if (fp == NULL) { 
-	// 	strcpy(buf, nofile); 
-	// 	int len = strlen(nofile); 
-	// 	buf[len] = EOF; 
-	// 	//for (i = 0; i <= len; i++) 
-	// 		//buf[i] = Cipher(buf[i]); 
-  //   return 1; 
-	// } 
-	char ch; 
-	for (int i = 0; i < s; i++) { 
-		ch = fgetc(fp);  
-		buf[i] = ch; 
-		if (ch == EOF) 
-			return 1; 
-	} 
-	return 0; 
-}
+
 
 int assign_sock_addy(struct sockaddr_in addy, int port, char ip) {
   int validate = 1;
@@ -83,37 +64,70 @@ int main(int argc, char *argv[]) {
   send(client_socket , "Connected!" , strlen("Connected!") , 0 );
   printf("IP: %s Port: %d\n", ip_address, port);
   while(1){
-    printf("\nPlease enter file name:\n");
+    printf("\nEnter a valid file name on the server or enter “dir” command:\n");
    
     scanf("%s",client_buffer); //user enters value
     
     fp = fopen(client_buffer, "r");
-    //User sends a file that is in the directory
+    //File is not in directory
     if(fp == NULL && strcmp(client_buffer, dir) != 0)
     {
       printf("\nFile not found\n");
     }
-    //User chooses dir
+     /*------------------Req 6------------------*/
     else if(fp == NULL && strcmp(client_buffer, dir) == 0){
       //  sendto(client_socket, client_buffer, 32, 
       //             sendrecvflag, (struct sockaddr*)&socket_connect, sizeof(socket_connect));
        write(client_socket, client_buffer,sizeof(client_buffer));
        bzero(client_buffer,sizeof(client_buffer));
-       recvfrom(client_socket, client_buffer, 32, 0, (struct sockaddr*)&socket_connect, &sc_length);
+       
+       //Doesn't Work v
+       recvfrom(client_socket, client_buffer, 32, 
+                    0, (struct sockaddr*)&socket_connect, &sc_length);
+       //Doesn't Work ^
+       
        printf("\ndirectories:\n");
        printf("%s", client_buffer);
        bzero(client_buffer,sizeof(client_buffer));
     }
-    //File is not in directory
+     /*------------------Req 6------------------*/
+
+     /*------------------Req 5------------------*/
+    //User sends a file that is in the directory
     else
     {
+      //Send File needs to be added
       sendto(client_socket, client_buffer, 32, 
                   sendrecvflag, (struct sockaddr*)&socket_connect, sizeof(socket_connect));
       printf("\nFile successfully sent\n");
     }
+    /*------------------Req 5------------------*/
     
     printf("\n-------------\n");
-
+ 
     //while(1){}
   }
+
+  /*------------------Req 5------------------*/
+  //Taken from FileTransfer example
+  int sendFile(FILE* fp, char* buf, int s) 
+  {  
+    // if (fp == NULL) { 
+    // 	strcpy(buf, nofile); 
+    // 	int len = strlen(nofile); 
+    // 	buf[len] = EOF; 
+    // 	//for (i = 0; i <= len; i++) 
+    // 		//buf[i] = Cipher(buf[i]); 
+    //   return 1; 
+    // } 
+    char ch; 
+    for (int i = 0; i < s; i++) { 
+      ch = fgetc(fp);  
+      buf[i] = ch; 
+      if (ch == EOF) 
+        return 1; 
+    } 
+    return 0; 
+  }
+/*------------------Req 5------------------*/
 }

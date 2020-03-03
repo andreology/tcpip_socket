@@ -65,17 +65,17 @@ int main(int argc, char *argv[]) {
   clearBuf(server_buffer);
   printf("\n%s\n", server_buffer);
   
- while(1) {
-//     // sendto(server_socket, server_buffer, 32, 0, (struct sockaddr*)&socket_connect,
-//     //   sc_length);
-    clearBuf(server_buffer); 
+ while(1) 
+ {
+    bzero(server_buffer,sizeof(server_buffer));
     recvfrom(server_socket, server_buffer, 32, 0, (struct sockaddr*)&socket_connect, &sc_length);
     printf("recvfrom: %s\n",server_buffer);
+    
+    /*------------------Req 6------------------*/
     if(strcmp(server_buffer, dir) == 0)
     {
       // opendir() returns a pointer of DIR type.  
       DIR *dr = opendir(".");
-      
       char temp[32];
       int first = 0;
       while ((de = readdir(dr)) != NULL) 
@@ -87,19 +87,23 @@ int main(int argc, char *argv[]) {
         }
         else
         {
-          /* code */
           //printf("%s", de->d_name); 
           strcat(temp,de->d_name);
           strcat(temp, "\n");
         }
-        
-        
       }
       bzero(server_buffer,sizeof(server_buffer));      
       strcpy(server_buffer,temp);
       //printf("2. %s\n",server_buffer);
       write(server_socket,server_buffer,sizeof(server_buffer));            
     }
+    /*------------------Req 6------------------*/
+    /*------------------Req 5------------------*/
+    else if()
+    {
+
+    }
+    /*------------------Req 5------------------*/
      //printf("\nafter:\n%s", server_buffer);
      //printf("\nsize: %ld\n", sizeof(server_buffer));
 
