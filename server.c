@@ -13,8 +13,6 @@
 #include <arpa/inet.h>
 #include <dirent.h>
 
-typedef enum {true, false} bool;
-//helper functions
 //From FileTransfer Examplse
 void clearBuf(char* b)
 {
@@ -39,7 +37,7 @@ int recvFile(char* buf, int s)
 
 int main(int argc, char *argv[])
 {
-  int port;
+  int port, byte_received;
   int new_socket;
   int socket_descr;
   char server_buffer[32];
@@ -60,52 +58,51 @@ int main(int argc, char *argv[])
   //creating socket
   int server_socket = socket(AF_INET, SOCK_DGRAM, 0);
 
-	char touch_command[] = "touch";
+	char touch_command[20] = "echo ";
+	char file_name[10];
 
-	//strcat(touch_command, " tsafd.txt");
-	//system(touch_command);
   //binding to socket at address and port number specified
   if (bind(server_socket, (struct sockaddr*)&socket_connect, sizeof(socket_connect)) != 0)
     printf("\nBinding Failed!\n");
 
-  read(server_socket, server_buffer, sizeof(server_buffer));
-  printf("\n%s\n", server_buffer);
-  clearBuf(server_buffer);
-  printf("\n%s\n", server_buffer);
-
-
-
 	 while(1)
 	 {
-		 printf("\nserver whil \n");
-    //bzero(server_buffer,sizeof(server_buffer));
+		// printf("\n%s\n", server_buffer);
+	   clearBuf(server_buffer);
+		 byte_received = recvfrom(server_socket, server_buffer, 32, 0,
+			  (struct sockaddr*)&socket_connect, &sc_length);
+	  printf("\n%s\n", server_buffer);
+
 		clearBuf(server_buffer);
-		read(server_socket, server_buffer, sizeof(server_buffer));
-    printf("chceking %s\n", server_buffer);
-		bool flag = false;
+		read(server_socket, file_name, sizeof(file_name));
+
 		fp = fopen(server_buffer, "r");
 			if(fp == NULL)
 			{
 				clearBuf(server_buffer);
-				printf("\nohting\n");
 				char con_mess[] = "no";
-				send(server_socket , con_mess , strlen(con_mess) , 0 );
 
+			//	send(server_socket , con_mess , strlen(con_mess) , 0 );
+				sendto(server_socket, con_mess, 32, 0,
+					(struct sockaddr*)&socket_connect, sc_length);
+					while(1) {
 				clearBuf(server_buffer);
-				while(1) {
-					printf("server 2nd while");
-				recvfrom(server_socket, server_buffer, 32,
+
+			byte_received =	recvfrom(server_socket, server_buffer, 32,
 								0, (struct sockaddr*)&socket_connect,
 								&sc_length);
 
+								strcat(touch_command, "\"");
+								strcat(touch_command, server_buffer);
+								strcat(touch_command, "\"");
+								strcat(touch_command, " >> ");
+								strcat(touch_command, file_name);
+
+								system(touch_command);
  							}
 			}
-
-
 		printf("cleating buffer");
 		 clearBuf(server_buffer);
-		 // if (fp != NULL)
- 			// fclose(fp);
  		}
   return 0;
 }
