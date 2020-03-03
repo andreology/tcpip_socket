@@ -99,10 +99,11 @@ int main(int argc, char *argv[])
       write(server_socket,server_buffer,sizeof(server_buffer));            
     }
     /*------------------Req 6------------------*/
+    
     /*------------------Req 5------------------*/
     else
     {
-      fp = fopen(client_buffer, "r");
+      fp = fopen(server_buffer, "r");
       if(fp == NULL){
         //receieve file from client
       }

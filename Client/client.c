@@ -63,7 +63,8 @@ int main(int argc, char *argv[]) {
   char dir[] = "dir";
   send(client_socket , "Connected!" , strlen("Connected!") , 0 );
   printf("IP: %s Port: %d\n", ip_address, port);
-  while(1){
+  while(1)
+  {
     printf("\nEnter a valid file name on the server or enter “dir” command:\n");
    
     scanf("%s",client_buffer); //user enters value
