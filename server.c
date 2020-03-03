@@ -11,6 +11,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <dirent.h>
 
 //helper functions
 //From FileTransfer Examplse
@@ -36,7 +37,9 @@ int main(int argc, char *argv[]) {
   int socket_descr;
   int incoming_socket;
   char server_buffer[32];
+  char dir[] = "dir";
   FILE* fp;
+  struct dirent *de;  // Pointer for directory entry 
 
   sscanf(argv[1], "%d", &port);
   //creating socket structuresockaddr_in
@@ -65,9 +68,41 @@ int main(int argc, char *argv[]) {
  while(1) {
 //     // sendto(server_socket, server_buffer, 32, 0, (struct sockaddr*)&socket_connect,
 //     //   sc_length);
-     clearBuf(server_buffer); 
-     recvfrom(server_socket, server_buffer, 32, 0, (struct sockaddr*)&socket_connect, &sc_length);
-     printf("\n %s", server_buffer);
+    clearBuf(server_buffer); 
+    recvfrom(server_socket, server_buffer, 32, 0, (struct sockaddr*)&socket_connect, &sc_length);
+    printf("recvfrom: %s\n",server_buffer);
+    if(strcmp(server_buffer, dir) == 0)
+    {
+      // opendir() returns a pointer of DIR type.  
+      DIR *dr = opendir(".");
+      
+      char temp[32];
+      int first = 0;
+      while ((de = readdir(dr)) != NULL) 
+      {
+        if(first == 0){
+          strcpy(temp,de->d_name);
+          strcat(temp, "\n");
+          first = 1;
+        }
+        else
+        {
+          /* code */
+          //printf("%s", de->d_name); 
+          strcat(temp,de->d_name);
+          strcat(temp, "\n");
+        }
+        
+        
+      }
+      bzero(server_buffer,sizeof(server_buffer));      
+      strcpy(server_buffer,temp);
+      //printf("2. %s\n",server_buffer);
+      write(server_socket,server_buffer,sizeof(server_buffer));            
+    }
+     //printf("\nafter:\n%s", server_buffer);
+     //printf("\nsize: %ld\n", sizeof(server_buffer));
+
    
  }
   return 0;

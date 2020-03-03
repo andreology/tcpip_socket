@@ -88,14 +88,23 @@ int main(int argc, char *argv[]) {
     scanf("%s",client_buffer); //user enters value
     
     fp = fopen(client_buffer, "r");
+    //User sends a file that is in the directory
     if(fp == NULL && strcmp(client_buffer, dir) != 0)
     {
       printf("\nFile not found\n");
     }
+    //User chooses dir
     else if(fp == NULL && strcmp(client_buffer, dir) == 0){
-
-      printf("\ndirectories\n"); 
+      //  sendto(client_socket, client_buffer, 32, 
+      //             sendrecvflag, (struct sockaddr*)&socket_connect, sizeof(socket_connect));
+       write(client_socket, client_buffer,sizeof(client_buffer));
+       bzero(client_buffer,sizeof(client_buffer));
+       recvfrom(client_socket, client_buffer, 32, 0, (struct sockaddr*)&socket_connect, &sc_length);
+       printf("\ndirectories:\n");
+       printf("%s", client_buffer);
+       bzero(client_buffer,sizeof(client_buffer));
     }
+    //File is not in directory
     else
     {
       sendto(client_socket, client_buffer, 32, 
