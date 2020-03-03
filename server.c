@@ -31,7 +31,8 @@ void verify_sock_descriptor(int socket) {
 		printf("\nSocket established w/descriptor %d \n", socket);
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) 
+{
   int port;
   int new_socket;
   int socket_descr;
@@ -99,9 +100,15 @@ int main(int argc, char *argv[]) {
     }
     /*------------------Req 6------------------*/
     /*------------------Req 5------------------*/
-    else if()
+    else
     {
-
+      fp = fopen(client_buffer, "r");
+      if(fp == NULL){
+        //receieve file from client
+      }
+      else{
+        //Send "File Already Exists" message to client
+      }
     }
     /*------------------Req 5------------------*/
      //printf("\nafter:\n%s", server_buffer);
@@ -111,3 +118,20 @@ int main(int argc, char *argv[]) {
  }
   return 0;
 }
+
+/*------------------Req 5------------------*/
+//Taken from FileTransfer Example
+int recvFile(char* buf, int s) 
+{ 
+	char ch; 
+	for (int i = 0; i < s; i++) { 
+		ch = buf[i]; 
+	//	ch = Cipher(ch); 
+		if (ch == EOF) 
+			return 1; 
+		else
+			printf("%c", ch); 
+	} 
+	return 0; 
+} 
+/*------------------Req 5------------------*/
