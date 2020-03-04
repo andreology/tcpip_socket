@@ -81,26 +81,23 @@ int main(int argc, char *argv[])
 		if(strcmp("dir", file_name) == 0)
         {
 			DIR *dr = opendir(".");
-			char temp[32];
+			char dir_mess[100];
 			int first = 0;
 			while ((de = readdir(dr)) != NULL)
 			{
 				if(first == 0){
-					strcpy(temp,de->d_name);
-					strcat(temp, " ");
+					strcpy(dir_mess,de->d_name);
+					strcat(dir_mess, " ");
 					first = 1;
 				}
 				else
 				{
-					strcat(temp,de->d_name);
-					strcat(temp, " ");
+					strcat(dir_mess,de->d_name);
+					strcat(dir_mess, " ");
 				}
-				printf("\n%s\n", temp);
 			}
-			//clearBuf(server_buffer);
-			strcpy(server_buffer, temp);
-			printf("\n%s\n", server_buffer);
-			sendto(server_socket, server_buffer, 32, 0,
+			
+			sendto(server_socket, dir_mess, 100, 0,
 					(struct sockaddr*)&socket_connect, sc_length);
 
         }
@@ -143,22 +140,22 @@ int main(int argc, char *argv[])
 // if(strcmp(server_buffer, dir) == 0)
 // {
 //   DIR *dr = opendir(".");
-//   char temp[32];
+//   char dir_mess[32];
 //   int first = 0;
 //   while ((de = readdir(dr)) != NULL)
 //   {
 //     if(first == 0){
-//       strcpy(temp,de->d_name);
-//       strcat(temp, "\n");
+//       strcpy(dir_mess,de->d_name);
+//       strcat(dir_mess, "\n");
 //       first = 1;
 //     }
 //     else
 //     {
-//       strcat(temp,de->d_name);
-//       strcat(temp, "\n");
+//       strcat(dir_mess,de->d_name);
+//       strcat(dir_mess, "\n");
 //     }
 //   }
 //   bzero(server_buffer,sizeof(server_buffer));
-//   strcpy(server_buffer,temp);
+//   strcpy(server_buffer,dir_mess);
 //   write(server_socket,server_buffer,sizeof(server_buffer));
 // }

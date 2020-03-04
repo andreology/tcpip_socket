@@ -94,11 +94,12 @@ int main(int argc, char *argv[])
         {
             sendto(client_socket, client_buffer, 32, 0, (struct sockaddr *)&socket_connect, sc_length);
             clearBuf(client_buffer);
-            int z = recvfrom(client_socket, client_buffer, 32,
+            char dir_mess[100];
+            int z = recvfrom(client_socket, dir_mess, 100,
                                 0, (struct sockaddr *)&socket_connect,
                                 &sc_length);
             printf("\nDirectories:\n");
-            printf("%s", client_buffer);
+            printf("%s", dir_mess);
         }
         else if (fp == NULL) //File is not in directory
         {
