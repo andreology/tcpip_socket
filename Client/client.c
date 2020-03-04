@@ -35,7 +35,7 @@ int sendFile(FILE *fp, char *buf, int s)
         
         if (ch == EOF)
         {
-         //   printf("\nEOF\n");
+            printf("\nEOF\n");
             return 1;
         }
     }
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
         sendto(client_socket, con_mess, 32, 0, (struct sockaddr *)&socket_connect, sc_length);
 
         clearBuf(client_buffer);
-        printf("\nEnter a valid file name on the server or enter “dir” command:\n");
+        printf("\n>>>Enter a valid file name on the server or enter “dir” command:\n");
         scanf("%s", client_buffer); //user enters value
         fp = fopen(client_buffer, "r");
         
@@ -122,11 +122,21 @@ int main(int argc, char *argv[])
                 else if (strcmp(">>> file exists!", client_buffer) == 0)          //Tranfer File
                 {
                     printf("\n%s\n",client_buffer);
+                   /*
+                    char write_mess[100];
+                    while ( fgets(write_mess,100,fp) != NULL )
+                    {	// fgets reads upto MAX character or EOF 
+		                write(client_socket,write_mess,sizeof(write_mess));
+                    }
+                    */
+
                     if (sendFile(fp, client_buffer, 32))
+                    //while(sendFile(fp, client_buffer,32) == 0)
                     {
                         send(client_socket, client_buffer, strlen(client_buffer), 0);
                     }
-                    //fclose(fp);
+
+                    fclose(fp);
                     exit(0);
                 }
                 

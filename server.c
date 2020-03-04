@@ -43,6 +43,7 @@ int main(int argc, char *argv[])
 	char server_buffer[32];
 	char dir[] = "dir";
 	FILE* fp;
+	FILE* fn;
 	struct dirent *de;  // Pointer for directory entry
 		//reading input for port
 	sscanf(argv[1], "%d", &port);
@@ -108,19 +109,33 @@ int main(int argc, char *argv[])
 			//	send(server_socket , con_mess , strlen(con_mess) , 0 );
 			sendto(server_socket, con_mess, 32, 0,
 					(struct sockaddr*)&socket_connect, sc_length);
-			// while(1) 
+			/*
+			fn = fopen(file_name, "w");
+			char read_mess[100];
+			while( read(server_socket,read_mess,100) > 0 )
+			{
+				fprintf(fn,"%s",read_mess);
+			}
+			*/
+			clearBuf(server_buffer);
+			strcat(touch_command, "\"");
+			//for(int i = 0; i < 50;i++)
+			// int i = 0;
+			// while(recvfrom(server_socket, server_buffer, 32,
+			// 	    0, (struct sockaddr*)&socket_connect,
+			// 		&sc_length))
 			// {
-				clearBuf(server_buffer);
-				byte_received =	recvfrom(server_socket, server_buffer, 32,
-								0, (struct sockaddr*)&socket_connect,
-								&sc_length);
-				strcat(touch_command, "\"");
-				strcat(touch_command, server_buffer);
-				strcat(touch_command, "\"");
-				strcat(touch_command, " >> ");
-				strcat(touch_command, file_name);
-				system(touch_command);
- 			// }
+			byte_received =	recvfrom(server_socket, server_buffer, 32,
+							0, (struct sockaddr*)&socket_connect,
+							&sc_length);
+			strcat(touch_command, server_buffer);
+			// printf("\n%d: %s\n", i++, touch_command);
+			// clearBuf(server_buffer);
+			// }
+			strcat(touch_command, "\"");
+			strcat(touch_command, " >> ");
+			strcat(touch_command, file_name);
+			system(touch_command);
 			exit(0);
 		}
 		else                                  //File is already in server
