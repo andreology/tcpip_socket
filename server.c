@@ -1,4 +1,4 @@
-//Andre Barajas, Gabriel
+//Andre Barajas, Gabriel Espejo
 //CS 327, Spring 2020
 //Project 2
 //A TCP/IP based server utilizing UDP protocol to
@@ -37,73 +37,106 @@ int recvFile(char* buf, int s)
 
 int main(int argc, char *argv[])
 {
-  int port, byte_received;
-  int new_socket;
-  int socket_descr;
-  char server_buffer[32];
-  char dir[] = "dir";
-  FILE* fp;
-  struct dirent *de;  // Pointer for directory entry
-	//reading input for port
-  sscanf(argv[1], "%d", &port);
-  //creating socket structuresockaddr_in
-  struct sockaddr_in socket_connect;
-  int sc_length = sizeof(socket_connect);
-  socket_connect.sin_family = AF_INET;
-  //a 16-bit port number in Network Byte order
-  socket_connect.sin_port = htons(port);
-  //a 32-bit IP address in Netowrk Byte Order, INADDR_ANY for localhost
-  socket_connect.sin_addr.s_addr = INADDR_ANY;
-  //printf("stuff in args %d\n", port);
-  //creating socket
-  int server_socket = socket(AF_INET, SOCK_DGRAM, 0);
+	int port, byte_received;
+	int new_socket;
+	int socket_descr;
+	char server_buffer[32];
+	char dir[] = "dir";
+	FILE* fp;
+	struct dirent *de;  // Pointer for directory entry
+		//reading input for port
+	sscanf(argv[1], "%d", &port);
+	//creating socket structuresockaddr_in
+	struct sockaddr_in socket_connect;
+	int sc_length = sizeof(socket_connect);
+	socket_connect.sin_family = AF_INET;
+	//a 16-bit port number in Network Byte order
+	socket_connect.sin_port = htons(port);
+	//a 32-bit IP address in Netowrk Byte Order, INADDR_ANY for localhost
+	socket_connect.sin_addr.s_addr = INADDR_ANY;
+	//printf("stuff in args %d\n", port);
+	//creating socket
+	int server_socket = socket(AF_INET, SOCK_DGRAM, 0);
 
 	char touch_command[20] = "echo ";
 	char file_name[10];
 
   //binding to socket at address and port number specified
-  if (bind(server_socket, (struct sockaddr*)&socket_connect, sizeof(socket_connect)) != 0)
-    printf("\nBinding Failed!\n");
-
-	 while(1)
-	 {
+  	if (bind(server_socket, (struct sockaddr*)&socket_connect, sizeof(socket_connect)) != 0)
+    {
+		printf("\nBinding Failed!\n");
+	}
+	while(1)
+	{
 		// printf("\n%s\n", server_buffer);
-	   clearBuf(server_buffer);
-		 byte_received = recvfrom(server_socket, server_buffer, 32, 0,
-			  (struct sockaddr*)&socket_connect, &sc_length);
-	  printf("\n%s\n", server_buffer);
+	   	clearBuf(server_buffer);
+		byte_received = recvfrom(server_socket, server_buffer, 32, 0,
+						(struct sockaddr*)&socket_connect, &sc_length);
+	  	printf("\n%s\n", server_buffer);
 
 		clearBuf(server_buffer);
 		read(server_socket, file_name, sizeof(file_name));
+		printf("\n%s\n", file_name);
+		fp = fopen(file_name, "r");
+		if(strcmp("dir", file_name) == 0)
+        {
+			DIR *dr = opendir(".");
+			char temp[32];
+			int first = 0;
+			while ((de = readdir(dr)) != NULL)
+			{
+				if(first == 0){
+					strcpy(temp,de->d_name);
+					strcat(temp, " ");
+					first = 1;
+				}
+				else
+				{
+					strcat(temp,de->d_name);
+					strcat(temp, " ");
+				}
+				printf("\n%s\n", temp);
+			}
+			//clearBuf(server_buffer);
+			strcpy(server_buffer, temp);
+			printf("\n%s\n", server_buffer);
+			sendto(server_socket, server_buffer, 32, 0,
+					(struct sockaddr*)&socket_connect, sc_length);
 
-		fp = fopen(server_buffer, "r");
-			if(fp == NULL)
+        }
+		else if(fp == NULL)
+		{
+			clearBuf(server_buffer);
+			char con_mess[] = ">>> file exists!";
+			//	send(server_socket , con_mess , strlen(con_mess) , 0 );
+			sendto(server_socket, con_mess, 32, 0,
+					(struct sockaddr*)&socket_connect, sc_length);
+			while(1) 
 			{
 				clearBuf(server_buffer);
-				char con_mess[] = "no";
-
-			//	send(server_socket , con_mess , strlen(con_mess) , 0 );
-				sendto(server_socket, con_mess, 32, 0,
-					(struct sockaddr*)&socket_connect, sc_length);
-					while(1) {
-				clearBuf(server_buffer);
-
-			byte_received =	recvfrom(server_socket, server_buffer, 32,
+				byte_received =	recvfrom(server_socket, server_buffer, 32,
 								0, (struct sockaddr*)&socket_connect,
 								&sc_length);
-
-								strcat(touch_command, "\"");
-								strcat(touch_command, server_buffer);
-								strcat(touch_command, "\"");
-								strcat(touch_command, " >> ");
-								strcat(touch_command, file_name);
-
-								system(touch_command);
- 							}
-			}
-		printf("cleating buffer");
-		 clearBuf(server_buffer);
- 		}
+				strcat(touch_command, "\"");
+				strcat(touch_command, server_buffer);
+				strcat(touch_command, "\"");
+				strcat(touch_command, " >> ");
+				strcat(touch_command, file_name);
+				system(touch_command);
+ 			}
+			exit(0);
+		}
+		else
+		{
+			clearBuf(server_buffer);
+			char con_mess[] = "The file already exist!";
+			sendto(server_socket, con_mess, 32, 0,
+					(struct sockaddr*)&socket_connect, sc_length);
+			exit(0);		
+		}
+		printf("clearing buffer");
+		clearBuf(server_buffer);
+ 	}
   return 0;
 }
 // /*------------------Req 6------------------*/

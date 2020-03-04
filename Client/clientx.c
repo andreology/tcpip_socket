@@ -1,3 +1,4 @@
+///DO NOT USE
 //Andre Barajas, Gabriel Espejo
 //CS 327, Spring 2020
 //Project 2
@@ -30,14 +31,9 @@ int sendFile(FILE *fp, char *buf, int s)
     for (int i = 0; i < s; i++)
     {
         ch = fgetc(fp);
-       // printf("%c", ch);
         buf[i] = ch;
-        
         if (ch == EOF)
-        {
-         //   printf("\nEOF\n");
-            return 1;
-        }
+        return 1;
     }
     return 0;
 }
@@ -84,23 +80,8 @@ int main(int argc, char *argv[])
         printf("\nEnter a valid file name on the server or enter “dir” command:\n");
         scanf("%s", client_buffer); //user enters value
         fp = fopen(client_buffer, "r");
-        
-        if(fp == NULL && strcmp("exit",client_buffer) == 0)
-        {
-            printf("\nexiting...\n");
-            exit(0);
-        }
-        else if(fp == NULL && strcmp("dir",client_buffer) == 0)
-        {
-            sendto(client_socket, client_buffer, 32, 0, (struct sockaddr *)&socket_connect, sc_length);
-            clearBuf(client_buffer);
-            int z = recvfrom(client_socket, client_buffer, 32,
-                                0, (struct sockaddr *)&socket_connect,
-                                &sc_length);
-            printf("\nDirectories:\n");
-            printf("%s", client_buffer);
-        }
-        else if (fp == NULL) //File is not in directory
+        //File is not in directory
+        if (fp == NULL)
         {
             printf("\nFile not found\n");
         }
@@ -113,22 +94,15 @@ int main(int argc, char *argv[])
                 int y = recvfrom(client_socket, client_buffer, 32,
                                 0, (struct sockaddr *)&socket_connect,
                                 &sc_length);
-                if (strcmp("The file already exist!", client_buffer) == 0)
+                if (strcmp("no", client_buffer) == 0)
                 {
-                    printf("\n%s\n",client_buffer);
-                    exit(0);
+                    
                 }
-                else if (strcmp(">>> file exists!", client_buffer) == 0)
+                if (sendFile(fp, client_buffer, 32))
                 {
-                    printf("\n%s\n",client_buffer);
-                    if (sendFile(fp, client_buffer, 32))
-                    {
-                        send(client_socket, client_buffer, strlen(client_buffer), 0);
-                    }
-                    //fclose(fp);
-                    exit(0);
+                    send(client_socket, client_buffer, strlen(client_buffer), 0);
                 }
-                
+                fclose(fp);
             }
         }
     //    /*------------------Req 6------------------*/
@@ -145,6 +119,16 @@ int main(int argc, char *argv[])
     //      printf("%s", client_buffer);
     //      bzero(client_buffer,sizeof(client_buffer));
     //   }
-    
+    //    /*------------------Req 5------------------*/
+    //   //User sends a file that is in the directory
+    //   else
+    //   {
+    //     //Send File needs to be added
+    //     sendto(client_socket, client_buffer, 32,
+    //                 sendrecvflag, (struct sockaddr*)&socket_connect, sizeof(socket_connect));
+    //     printf("\nFile successfully sent\n");
+    //   }
+    //   printf("\n-------------\n");
+    //
     }
 }
