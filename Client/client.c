@@ -108,18 +108,18 @@ int main(int argc, char *argv[])
         else //file is in Client directory
         {
             sendto(client_socket, client_buffer, 32, 0, (struct sockaddr *)&socket_connect, sc_length);
-            while (1)
-            {
+          //  while (1)
+          //  {
                 clearBuf(client_buffer);
                 int y = recvfrom(client_socket, client_buffer, 32,
                                 0, (struct sockaddr *)&socket_connect,
                                 &sc_length);
-                if (strcmp("The file already exist!", client_buffer) == 0)
+                if (strcmp("The file already exist!", client_buffer) == 0)        //File already in server directory
                 {
                     printf("\n%s\n",client_buffer);
                     exit(0);
                 }
-                else if (strcmp(">>> file exists!", client_buffer) == 0)
+                else if (strcmp(">>> file exists!", client_buffer) == 0)          //Tranfer File
                 {
                     printf("\n%s\n",client_buffer);
                     if (sendFile(fp, client_buffer, 32))
@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
                     exit(0);
                 }
                 
-            }
+           // }
         }
     //    /*------------------Req 6------------------*/
     //   else if(fp == NULL && strcmp(client_buffer, dir) == 0){

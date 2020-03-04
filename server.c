@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 
 		clearBuf(server_buffer);
 		read(server_socket, file_name, sizeof(file_name));
-		printf("\n%s\n", file_name);
+		// printf("\n%s\n", file_name);
 		fp = fopen(file_name, "r");
 		if(strcmp("dir", file_name) == 0)
         {
@@ -101,15 +101,15 @@ int main(int argc, char *argv[])
 					(struct sockaddr*)&socket_connect, sc_length);
 
         }
-		else if(fp == NULL)
+		else if(fp == NULL)                    //File needs to be transferred to server
 		{
 			clearBuf(server_buffer);
 			char con_mess[] = ">>> file exists!";
 			//	send(server_socket , con_mess , strlen(con_mess) , 0 );
 			sendto(server_socket, con_mess, 32, 0,
 					(struct sockaddr*)&socket_connect, sc_length);
-			while(1) 
-			{
+			// while(1) 
+			// {
 				clearBuf(server_buffer);
 				byte_received =	recvfrom(server_socket, server_buffer, 32,
 								0, (struct sockaddr*)&socket_connect,
@@ -120,10 +120,10 @@ int main(int argc, char *argv[])
 				strcat(touch_command, " >> ");
 				strcat(touch_command, file_name);
 				system(touch_command);
- 			}
+ 			// }
 			exit(0);
 		}
-		else
+		else                                  //File is already in server
 		{
 			clearBuf(server_buffer);
 			char con_mess[] = "The file already exist!";
