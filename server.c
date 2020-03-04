@@ -13,15 +13,18 @@
 #include <arpa/inet.h>
 #include <dirent.h>
 
-//From FileTransfer Examplse
+//helper functions
+//From FileTransfer Example
+//method to clear buffer
 void clearBuf(char* b)
 {
 	int i;
 	for (i = 0; i < 32; i++)
 		b[i] = '\0';
 }
-/*------------------Req 5------------------*/
+
 //Taken from FileTransfer Example
+//NOT USED
 int recvFile(char* buf, int s)
 {
 	char ch;
@@ -43,9 +46,9 @@ int main(int argc, char *argv[])
 	char server_buffer[32];
 	char dir[] = "dir";
 	FILE* fp;
-	FILE* fn;
+	//FILE* fn;
 	struct dirent *de;  // Pointer for directory entry
-		//reading input for port
+	//reading input for port
 	sscanf(argv[1], "%d", &port);
 	//creating socket structuresockaddr_in
 	struct sockaddr_in socket_connect;
@@ -62,7 +65,7 @@ int main(int argc, char *argv[])
 	char touch_command[20] = "echo ";
 	char file_name[10];
 
-  //binding to socket at address and port number specified
+  	//binding to socket at address and port number specified
   	if (bind(server_socket, (struct sockaddr*)&socket_connect, sizeof(socket_connect)) != 0)
     {
 		printf("\nBinding Failed!\n");
@@ -146,7 +149,7 @@ int main(int argc, char *argv[])
 					(struct sockaddr*)&socket_connect, sc_length);
 			exit(0);		
 		}
-		printf("clearing buffer");
+	//	printf("clearing buffer");
 		clearBuf(server_buffer);
  	}
   return 0;

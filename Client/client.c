@@ -17,13 +17,16 @@
 #define sendrecvflag 0
 
 //helper functions
-//From FileTransfer Examplse
+//From FileTransfer Example
+//method to clear buffer
 void clearBuf(char *b)
 {
     int i;
     for (i = 0; i < 32; i++)
         b[i] = '\0';
 }
+/// Modified from File Transfer example
+/// Method to copy file to buffer
 int sendFile(FILE *fp, char *buf, int s)
 {
     char ch;
