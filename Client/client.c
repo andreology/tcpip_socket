@@ -90,7 +90,8 @@ int main(int argc, char *argv[])
         
         if(fp == NULL && strcmp("exit",client_buffer) == 0)
         {
-            printf("\nexiting...\n");
+            sendto(client_socket, client_buffer, 32, 0, (struct sockaddr *)&socket_connect, sc_length);
+            printf("\n>>>exiting...\n");
             exit(0);
         }
         else if(fp == NULL && strcmp("dir",client_buffer) == 0)

@@ -82,7 +82,11 @@ int main(int argc, char *argv[])
 		read(server_socket, file_name, sizeof(file_name));
 		// printf("\n%s\n", file_name);
 		fp = fopen(file_name, "r");
-		if(strcmp("dir", file_name) == 0)
+		if(strcmp("exit", file_name) == 0){
+			printf("\n>>>exiting...\n");
+            exit(0);
+		}
+		else if(strcmp("dir", file_name) == 0)
         {
 			DIR *dr = opendir(".");
 			char dir_mess[100];
@@ -91,13 +95,13 @@ int main(int argc, char *argv[])
 			{
 				if(first == 0){
 					strcpy(dir_mess,de->d_name);
-					strcat(dir_mess, " ");
+					strcat(dir_mess, "\n");
 					first = 1;
 				}
 				else
 				{
 					strcat(dir_mess,de->d_name);
-					strcat(dir_mess, " ");
+					strcat(dir_mess, "\n");
 				}
 			}
 			
